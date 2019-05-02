@@ -1,17 +1,8 @@
 import pprint
 
-# text = ""
-# stopword = ""
-# while True:
-#     line = input()
-#     if line.strip() == stopword:
-#         break
-#     text += "%s\n" % line
-# print(text)
 
 patterns = {}
-pp = pprint.PrettyPrinter(width=41, compact=True)
-
+regexes = {}
 
 def sort_by_length(instring, patterns):
     the_len = len(instring)
@@ -52,6 +43,29 @@ def strip_off_leading_trailing_slash(the_line):
         the_line = the_line[:-1]
     return the_line
 
+def create_the_regex(inpattern):
+    WILDCARD = '*'
+    SPECIAL_CHARS = ['^' '$' '*' '+' '?']
+    the_regex = '^'
+    the_length = len(inpattern.split(","))
+    idx = 0
+    for item in inpattern.split(","):
+        if len(item) == 1:
+            if item == WILDCARD:
+                the_regex += '.'
+            elif item in SPECIAL_CHARS:
+                the_regex += '[\{}]'.format(item)
+            else:
+                the_regex += '[{}]'.format(item)
+        else:
+            the_regex += item
+        idx += 1
+        if idx < the_length:
+            the_regex += '[/]'
+    the_regex += '$'
+    return the_regex
+
+pp = pprint.PrettyPrinter(width=80, compact=True)
 while True:
     try:
         line = input()
@@ -60,12 +74,13 @@ while True:
     if line != "":
         the_line = line.strip()
         value, the_len = sort_by_length(the_line, patterns)
-        # value, first_letter = sort_by_first_letter(the_line, patterns)
         patterns[the_len] = value
-        # patterns[first_letter] = value
+        the_regex = create_the_regex(the_line)
+        regexes[the_line] = the_regex
     else:
         break
 pp.pprint(patterns)
+pp.pprint(regexes)
 
 
 
