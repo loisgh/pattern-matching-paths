@@ -1,4 +1,3 @@
-from ManageInput import ManageInput
 import pprint
 
 # text = ""
@@ -18,10 +17,23 @@ def sort_by_length(instring, patterns):
     the_len = len(instring)
     if the_len in patterns:
         value = patterns[the_len]
+    else:
+        value = None
+    value = sort_by_first_char_within_length(instring, value)
+    return value, the_len
+
+def sort_by_first_char_within_length(instring, patterns):
+    first_char = instring[0:1]
+    if patterns is None:
+        patterns = {}
+
+    if first_char in patterns:
+        value = patterns[first_char]
         value.append(instring)
     else:
         value = [instring]
-    return value, the_len
+    patterns[first_char] = value
+    return patterns
 
 def sort_by_first_letter(instring, patterns):
     first_char = instring[0:1]
@@ -47,10 +59,10 @@ while True:
         break
     if line != "":
         the_line = line.strip()
-        # value, the_len = sort_by_length(the_line, patterns)
-        value, first_letter = sort_by_first_letter(the_line, patterns)
-        # patterns[the_len] = value
-        patterns[first_letter] = value
+        value, the_len = sort_by_length(the_line, patterns)
+        # value, first_letter = sort_by_first_letter(the_line, patterns)
+        patterns[the_len] = value
+        # patterns[first_letter] = value
     else:
         break
 pp.pprint(patterns)
