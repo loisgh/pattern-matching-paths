@@ -1,4 +1,5 @@
 import unittest
+import Pattern
 
 class PatternTests(unittest.TestCase):
 

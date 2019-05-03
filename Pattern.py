@@ -1,8 +1,6 @@
 import pprint
 import re
 
-#TODO Do the match in the shortest time possible
-
 
 def sort_by_length(instring, patterns):
     the_len = len(instring)
@@ -26,7 +24,6 @@ def sort_by_first_char_within_length(instring, patterns):
     patterns[first_char] = value
     return patterns
 
-# TODO Do this right before match and only during matching
 def strip_off_leading_trailing_slash(the_line):
     if the_line.startswith('/'):
         the_line = the_line[1:]
@@ -63,6 +60,24 @@ def determine_correct_regex(item):
         the_regex += item
     return the_regex
 
+def match_the_line(instr, patterns, regexes):
+    # TODO Find all possible matches and choose the one with the right most wildcards
+    string_to_match = strip_off_leading_trailing_slash(instr)
+    if len(string_to_match) in patterns:
+        patterns_to_search = patterns[len(string_to_match)]
+    else:
+        return "NO MATCH"
+    if string_to_match[0] in patterns_to_search:
+        for pattern in patterns_to_search[string_to_match[0]]:
+            result = re.match(regexes[pattern], string_to_match)
+            if result:
+                return pattern
+    if '*' in patterns_to_search:
+        for pattern in patterns_to_search['*']:
+            result = re.match(regexes[pattern], string_to_match)
+            if result:
+                return pattern
+    return "NO MATCH"
 
 def read_patterns_and_paths():
     patterns = {}
@@ -92,15 +107,14 @@ def read_patterns_and_paths():
         num_paths = int(numstr)
     else:
         raise ValueError("You must enter a valid number between 1 and 999")
-    print("num paths is {}".format(num_paths))
 
     idx = 1
     while idx <= num_paths:
         line = input()
         if line != "":
-            print("in paths loop {}".format(idx))
             the_line = line.strip()
-            print(the_line)
+            result = match_the_line(the_line, patterns, regexes)
+            print(result)
             idx += 1
 
     pp = pprint.PrettyPrinter(width=80, compact=True)
