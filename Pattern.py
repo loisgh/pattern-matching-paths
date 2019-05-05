@@ -3,7 +3,7 @@ import re
 
 
 # TODO create command line program
-class Pattern():
+class Pattern:
     def sort_by_length(self, instring, patterns):
         the_len = len(instring)
         if the_len in patterns:
@@ -104,17 +104,22 @@ class Pattern():
                 if result:
                     return pattern
 
+    def get_number_of(self, num_type):
+        numstr = input().strip()
+        if re.match('[1-9][0-9]{0,3}', numstr):
+            return int(numstr)
+        else:
+            raise ValueError("You must enter a valid number between 1 and 999")
+
+
     # TODO work into two methods One for patterns One for paths.
     def read_patterns_and_paths(self):
         patterns = {}
         regexes = {}
+        results = []
 
-        # get first pattern
-        numstr = input().strip()
-        if re.match('[1-9][0-9]{0,3}', numstr):
-            num_patterns = int(numstr)
-        else:
-            raise ValueError("You must enter a valid number between 1 and 999")
+        # get number of patterns
+        num_patterns = self.get_number_of("patterns")
 
         idx = 1
         while idx <= num_patterns:
@@ -126,28 +131,25 @@ class Pattern():
                 the_regex, wildcard_count, idx_sum = self.create_the_regex(the_line)
                 regexes[the_line] = {'regex': the_regex, 'wildcard_count': wildcard_count, 'idx_sum': idx_sum}
                 idx += 1
+            else:
+                raise ValueError("Your pattern cannot be empty.")
 
-        # get first path
-        numstr = input().strip()
-        if re.match('[1-9][0-9]{0,3}', numstr):
-            num_paths = int(numstr)
-        else:
-            raise ValueError("You must enter a valid number between 1 and 999")
+        # get number of paths
+        num_paths = self.get_number_of("paths")
 
         idx = 1
         while idx <= num_paths:
             line = input()
             if line != "":
                 the_line = line.strip()
-                # TODO Add Match to result list and print out at the end
                 result = self.match_the_line(the_line, patterns, regexes)
-                print(result)
+                results.append(result)
                 idx += 1
+            else:
+                raise ValueError("Your path cannot be empty.")
 
-        pp = pprint.PrettyPrinter(width=80, compact=True)
-        pp.pprint(patterns)
-        pp.pprint(regexes)
-
-
-pat = Pattern()
-pat.read_patterns_and_paths()
+        # pp = pprint.PrettyPrinter(width=80, compact=True)
+        # pp.pprint(patterns)
+        # pp.pprint(regexes)
+        for result in results:
+            print(result)

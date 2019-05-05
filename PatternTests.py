@@ -1,10 +1,14 @@
 import unittest
-import Pattern
+from Pattern import *
+# import mock
 
-# TODO Write Unit tests
 
 class PatternTests(unittest.TestCase):
 
-    def TestLoadPatterns(self):
-
-        pass
+    def test_sort(self):
+        pat = Pattern()
+        expected_result = {'*': ['*,b,*']}
+        expected_len = 5
+        actual_result, actual_len = pat.sort_by_length('*,b,*', {})
+        self.assertEqual(actual_len, expected_len)
+        self.assertDictEqual(actual_result, expected_result)
