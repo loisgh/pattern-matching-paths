@@ -111,8 +111,25 @@ class Pattern:
         else:
             raise ValueError("You must enter a valid number between 1 and 999")
 
+    def process_pattern(self, line, patterns, regexes):
+        if line != "":
+            the_line = line.strip()
+            value, the_len = self.sort_by_length(the_line, patterns)
+            patterns[the_len] = value
+            the_regex, wildcard_count, idx_sum = self.create_the_regex(the_line)
+            regexes[the_line] = {'regex': the_regex, 'wildcard_count': wildcard_count, 'idx_sum': idx_sum}
+        else:
+            raise ValueError("Your pattern cannot be empty.")
+        return patterns, regexes
 
-    # TODO work into two methods One for patterns One for paths.
+    def match_paths(self, line, patterns, regexes):
+        if line != "":
+            the_line = line.strip()
+            result = self.match_the_line(the_line, patterns, regexes)
+            return result
+        else:
+            raise ValueError("Your path cannot be empty.")
+
     def read_patterns_and_paths(self):
         patterns = {}
         regexes = {}
@@ -121,35 +138,25 @@ class Pattern:
         # get number of patterns
         num_patterns = self.get_number_of("patterns")
 
+        # process all the patterns
         idx = 1
         while idx <= num_patterns:
             line = input()
-            if line != "":
-                the_line = line.strip()
-                value, the_len = self.sort_by_length(the_line, patterns)
-                patterns[the_len] = value
-                the_regex, wildcard_count, idx_sum = self.create_the_regex(the_line)
-                regexes[the_line] = {'regex': the_regex, 'wildcard_count': wildcard_count, 'idx_sum': idx_sum}
-                idx += 1
-            else:
-                raise ValueError("Your pattern cannot be empty.")
+            patterns, regexes = self.process_pattern(line, patterns, regexes)
+            idx += 1
 
         # get number of paths
         num_paths = self.get_number_of("paths")
 
+        # match all the paths and append to results
         idx = 1
         while idx <= num_paths:
             line = input()
-            if line != "":
-                the_line = line.strip()
-                result = self.match_the_line(the_line, patterns, regexes)
-                results.append(result)
-                idx += 1
-            else:
-                raise ValueError("Your path cannot be empty.")
+            results.append(self.match_paths(line, patterns, regexes))
+            idx += 1
 
-        # pp = pprint.PrettyPrinter(width=80, compact=True)
-        # pp.pprint(patterns)
-        # pp.pprint(regexes)
+        pp = pprint.PrettyPrinter(width=80, compact=True)
+        pp.pprint(patterns)
+        pp.pprint(regexes)
         for result in results:
             print(result)
