@@ -1,11 +1,16 @@
 import pprint
 import re
 
-
-# TODO create command line program
+# TODO COUNT THE NUMBER OF FIELDS NOT the length of the string Do this for both path and pattern . DONE
+# TODO figure out escaping special charachters . DONE
+# TODO figure out how to tell if white space is one or more characters
+# TODO figure out wildcard for one or more characters . DONE
+# TODO Wildcard at the beginning
+# TODO Wildcard at the end
+# TODO Wildcard in the middle
 class Pattern:
     def sort_by_length(self, instring, patterns):
-        the_len = len(instring)
+        the_len = len(instring.split(','))
         if the_len in patterns:
             value = patterns[the_len]
         else:
@@ -40,7 +45,7 @@ class Pattern:
         wildcard_count = 0
         idx_sum = 0
         for item in inpattern.split(","):
-            the_regex += self.determine_correct_regex(item)
+            the_regex += self.build_regex(item)
             if item == '*':
                 wildcard_count += 1
                 idx_sum += idx
@@ -51,28 +56,51 @@ class Pattern:
         the_regex += '$'
         return the_regex, wildcard_count, idx_sum
 
-    def determine_correct_regex(self, item):
+    def build_regex(self, item):
         wildcard = '*'
-        special_chars = ['^' '$' '*' '+' '?']
         the_regex = ""
-        if len(item) == 1:
-            if item == wildcard:
-                the_regex += '.'
-            elif item in special_chars:
-                the_regex += '[\{}]'.format(item)
-            else:
-                the_regex += '[{}]'.format(item)
+        if item == wildcard:
+            the_regex += '.+'
+        elif item.strip == "":
+            the_regex += '\s'
         else:
-            the_regex += item
+            the_regex += re.escape(item)
         return the_regex
+
+
+    def get_number_of(self, num_type):
+        numstr = input().strip()
+        if re.match('[1-9][0-9]{0,3}', numstr):
+            return int(numstr)
+        else:
+            raise ValueError("You must enter a valid number between 1 and 999")
+
+    def process_pattern(self, line, patterns, regexes):
+        if line != "":
+            the_line = line.strip('\n')
+            value, the_len = self.sort_by_length(the_line, patterns)
+            patterns[the_len] = value
+            the_regex, wildcard_count, idx_sum = self.create_the_regex(the_line)
+            regexes[the_line] = {'regex': the_regex, 'wildcard_count': wildcard_count, 'idx_sum': idx_sum}
+        else:
+            raise ValueError("Your pattern cannot be empty.")
+        return patterns, regexes
+
+    def match_paths(self, line, patterns, regexes):
+        if line != "":
+            the_line = line.strip('\n')
+            result = self.match_the_line(the_line, patterns, regexes)
+            return result
+        else:
+            raise ValueError("Your path cannot be empty.")
 
     def match_the_line(self, instr, patterns, regexes):
         results = []
         wild_cards = []
         idx_sums = []
         string_to_match = self.strip_off_leading_trailing_slash(instr)
-        if len(string_to_match) in patterns:
-            patterns_to_search = patterns[len(string_to_match)]
+        if len(string_to_match.split('/')) in patterns:
+            patterns_to_search = patterns[len(string_to_match.split('/'))]
         else:
             return "NO MATCH"
         things_to_search_for = [string_to_match[0], "*"]
@@ -85,10 +113,10 @@ class Pattern:
                 idx_sums.append(regexes[the_pattern]['idx_sum'])
 
         if len(results) > 1:
-            min_wild_card = wild_cards.index(max(wild_cards))
-            min_wild_card_count = wild_cards.count(min_wild_card)
-            if min_wild_card == 1:
-                return results[min_wild_card_count]
+            min_wild_card = wild_cards.index(min(wild_cards))
+            min_wild_card_count = wild_cards.count(min(wild_cards))
+            if min_wild_card_count == 1:
+                return results[min_wild_card]
             else:
                 max_idx_sum = idx_sums.index(max(idx_sums))
                 return results[max_idx_sum]
@@ -104,31 +132,6 @@ class Pattern:
                 if result:
                     return pattern
 
-    def get_number_of(self, num_type):
-        numstr = input().strip()
-        if re.match('[1-9][0-9]{0,3}', numstr):
-            return int(numstr)
-        else:
-            raise ValueError("You must enter a valid number between 1 and 999")
-
-    def process_pattern(self, line, patterns, regexes):
-        if line != "":
-            the_line = line.strip()
-            value, the_len = self.sort_by_length(the_line, patterns)
-            patterns[the_len] = value
-            the_regex, wildcard_count, idx_sum = self.create_the_regex(the_line)
-            regexes[the_line] = {'regex': the_regex, 'wildcard_count': wildcard_count, 'idx_sum': idx_sum}
-        else:
-            raise ValueError("Your pattern cannot be empty.")
-        return patterns, regexes
-
-    def match_paths(self, line, patterns, regexes):
-        if line != "":
-            the_line = line.strip()
-            result = self.match_the_line(the_line, patterns, regexes)
-            return result
-        else:
-            raise ValueError("Your path cannot be empty.")
 
     def read_patterns_and_paths(self):
         patterns = {}
@@ -144,6 +147,9 @@ class Pattern:
             line = input()
             patterns, regexes = self.process_pattern(line, patterns, regexes)
             idx += 1
+        pp = pprint.PrettyPrinter(width=80, compact=True)
+        pp.pprint(patterns)
+        pp.pprint(regexes)
 
         # get number of paths
         num_paths = self.get_number_of("paths")
@@ -155,8 +161,5 @@ class Pattern:
             results.append(self.match_paths(line, patterns, regexes))
             idx += 1
 
-        pp = pprint.PrettyPrinter(width=80, compact=True)
-        pp.pprint(patterns)
-        pp.pprint(regexes)
         for result in results:
             print(result)

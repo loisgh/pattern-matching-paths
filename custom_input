@@ -1,0 +1,12 @@
+5
+*,b,*
+a,*,*
+ ,x,y,z
+*,!@#$%^&*(),*,*
+foo,!@#$%^&*(),*,baz
+5
+ /x/y/z
+/w/x/y/z/
+a/b/c
+something/!@#$%^&*()/yuck/yum
+foo/!@#$%^&*()/blah/baz

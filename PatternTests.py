@@ -47,10 +47,11 @@ class PatternTests(unittest.TestCase):
             7: {'*': ['*,x,y,z'], 'w': ['w,x,*,*']},
             11: {'f': ['foo,bar,baz']}}
 
-        expected_result = 'w,x,*,*'
         pat = Pattern()
+        expected_result = 'w,x,*,*'
         actual_result = pat.match_the_line('/w/x/y/z/', patterns, regexes)
         self.assertEqual(expected_result, actual_result)
+        expected_result = ' ,x,y,z' \
 
     def test_process_pattern(self):
         regexes = \
