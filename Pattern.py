@@ -1,10 +1,6 @@
 import pprint
 import re
 
-# TODO COUNT THE NUMBER OF FIELDS NOT the length of the string Do this for both path and pattern . DONE
-# TODO figure out escaping special charachters . DONE
-# TODO figure out how to tell if white space is one or more characters
-# TODO figure out wildcard for one or more characters . DONE
 # TODO Wildcard at the beginning
 # TODO Wildcard at the end
 # TODO Wildcard in the middle
@@ -61,12 +57,29 @@ class Pattern:
         the_regex = ""
         if item == wildcard:
             the_regex += '.+'
-        elif item.strip == "":
-            the_regex += '\s'
+        elif item.strip() == "":
+            the_regex += '\s+'
+        elif item.find(" ") != -1:
+            the_regex += self.handle_white_space(item)
         else:
             the_regex += re.escape(item)
         return the_regex
 
+    def handle_white_space(self, item):
+        item_list = item.split(" ")
+        the_length = len(item_list) - 1
+        if len(item_list) == 1:
+            return item
+        else:
+            out_item = ""
+            for idx, item in enumerate(item_list):
+                if item.strip() == "":
+                    continue
+                else:
+                    out_item += re.escape(item)
+                    if idx < the_length:
+                        out_item += "\s+"
+            return out_item
 
     def get_number_of(self, num_type):
         numstr = input().strip()

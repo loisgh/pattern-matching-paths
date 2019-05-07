@@ -1,12 +1,16 @@
-5
+7
 *,b,*
 a,*,*
  ,x,y,z
 *,!@#$%^&*(),*,*
 foo,!@#$%^&*(),*,baz
-5
+*,!@#$ %^&*(),*,*
+foo,!@#$ %^&*(),*,baz
+7
  /x/y/z
 /w/x/y/z/
 a/b/c
 something/!@#$%^&*()/yuck/yum
 foo/!@#$%^&*()/blah/baz
+something/!@#$ %^&*()/yuck/yum
+foo/!@#$ %^&*()/blah/baz
