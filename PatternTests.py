@@ -65,3 +65,7 @@ class PatternTests(unittest.TestCase):
         expected_result = 'foo,!@#$ %^&*(),*,baz'
         actual_result = pat.match_the_line('foo/!@#$ %^&*()/blah/baz', patterns, regexes)
         self.assertEqual(expected_result, actual_result)
+
+        expected_result = 'foo,!@#$ %^&*(),*,baz'
+        actual_result = pat.match_the_line('foo/!@#$      %^&*()/blah/baz', patterns, regexes)
+        self.assertEqual(expected_result, actual_result)

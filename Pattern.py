@@ -157,9 +157,6 @@ class Pattern:
             line = input()
             patterns, regexes = self.process_pattern(line, patterns, regexes)
             idx += 1
-        pp = pprint.PrettyPrinter(width=80, compact=True)
-        pp.pprint(patterns)
-        pp.pprint(regexes)
 
         # get number of paths
         num_paths = self.get_number_of("paths")
