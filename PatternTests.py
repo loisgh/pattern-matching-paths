@@ -42,13 +42,26 @@ class PatternTests(unittest.TestCase):
              'foo,bar,baz': {'idx_sum': 0,
                              'regex': '^foo[/]bar[/]baz$',
                              'wildcard_count': 0},
-            'w,x,*,*': {'idx_sum': 5, 'regex': '^w[/]x[/].+[/].+$', 'wildcard_count': 2}}
+            'w,x,*,*': {'idx_sum': 5, 'regex': '^w[/]x[/].+[/].+$', 'wildcard_count': 2},
+            ' ,x,y,z': {'idx_sum': 0, 'regex': '^\\s+[/]x[/]y[/]z$', 'wildcard_count': 0},
+             'foo,!@#$ %^&*(),*,baz': {'idx_sum': 2,
+                                       'regex': '^foo[/]!@\\#\\$\\s+%\\^\\&\\*\\(\\)[/].+[/]baz$',
+                                       'wildcard_count': 1},
+             }
 
         patterns = \
             {3: {'*': ['*,b,*', '*,*,c'], 'a': ['a,*,*'], 'f': ['foo,bar,baz']},
-             4: {'*': ['*,x,y,z'], 'w': ['w,x,*,*']}}
+             4: {'*': ['*,x,y,z'], 'w': ['w,x,*,*'], ' ': [' ,x,y,z'], 'f': ['foo,!@#$ %^&*(),*,baz']}}
 
         pat = Pattern()
         expected_result = '*,x,y,z'
         actual_result = pat.match_the_line('/w/x/y/z/', patterns, regexes)
+        self.assertEqual(expected_result, actual_result)
+
+        expected_result = ' ,x,y,z'
+        actual_result = pat.match_the_line(' /x/y/z', patterns, regexes)
+        self.assertEqual(expected_result, actual_result)
+
+        expected_result = 'foo,!@#$ %^&*(),*,baz'
+        actual_result = pat.match_the_line('foo/!@#$ %^&*()/blah/baz', patterns, regexes)
         self.assertEqual(expected_result, actual_result)

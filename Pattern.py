@@ -1,9 +1,6 @@
 import pprint
 import re
 
-# TODO Wildcard at the beginning
-# TODO Wildcard at the end
-# TODO Wildcard in the middle
 class Pattern:
     def sort_by_length(self, instring, patterns):
         the_len = len(instring.split(','))
@@ -69,7 +66,7 @@ class Pattern:
         item_list = item.split(" ")
         the_length = len(item_list) - 1
         if len(item_list) == 1:
-            return item
+            return re.escape(item)
         else:
             out_item = ""
             for idx, item in enumerate(item_list):
